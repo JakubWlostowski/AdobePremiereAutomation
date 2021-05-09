@@ -1,16 +1,25 @@
 var LANGUAGE_VERSIONS = { FR: 'FR', EN: 'EN', ES: 'ES', IT: 'IT', DE: 'DE' }
-var path = 'C:\\praca\\adobe\\24.01.PEUGEOT 307\\support\\'
+var path = ''
 var project = app.project
+var outputPresetPath = "C:\\Users\\jakub\\Documents\\example2.epr"
 
 var projectItem = project.rootItem
 
-function createLangueVerions(name) {
+function getDirectoryPath() {
+	var myFolder = Folder.selectDialog ("Select a folder containing your video files");
+	path = myFolder.fsName + "\\"
+}
+
+function createLanguageVerions(name, append_french_version) {
   if (name === null) {
-    alert('Pusta nazwa pliku!!!')
+    alert('Empty file name!')
     exit()
   }
   var parts = name.split(LANGUAGE_VERSIONS.FR)
   var names = []
+  if (append_french_version) {
+    names.push(parts[0] + LANGUAGE_VERSIONS.FR + parts[1])
+  }
   names.push(parts[0] + LANGUAGE_VERSIONS.EN + parts[1])
   names.push(parts[0] + LANGUAGE_VERSIONS.ES + parts[1])
   names.push(parts[0] + LANGUAGE_VERSIONS.IT + parts[1])
@@ -43,7 +52,7 @@ function addVideoTracks() {
 
 function handleClip(baseClip, folder, startingTrack) {
   var name = baseClip.name
-  var names = createLangueVerions(name)
+  var names = createLanguageVerions(name, false)
   var paths = createPaths(path, names)
   var bin = projectItem.children[findChildItem(projectItem, folder)]
 
@@ -88,16 +97,87 @@ function addEffects(itemIndex, clip, startingTrack) {
   }
 }
 
+function renderSequence(outputPresetPath, exportName, outputPath) {
+		app.enableQE();
+		var activeSequence = qe.project.getActiveSequence();
+		if (activeSequence)	{
+			//app.encoder.launchEncoder();
+			var seqInPoint	= app.project.activeSequence.getInPoint();
+			var seqOutPoint	= app.project.activeSequence.getOutPoint();
+
+			if (outputPath){
+				var outPreset		= new File(outputPresetPath);
+				if (outPreset.exists === true){
+					var outputFormatExtension		=	activeSequence.getExportFileExtension(outPreset.fsName);
+					if (outputFormatExtension){
+						var outputFilename	= 	activeSequence.name + '.' + outputFormatExtension;
+
+						var fullPathToFile	= 	outputPath.fsName 	+ 
+												"\\" 	+ 
+												exportName + 
+												"." + 
+												outputFormatExtension;			
+
+						var outFileTest = new File(fullPathToFile);
+
+						if (outFileTest.exists){
+							var destroyExisting	= confirm("A file with that name already exists; overwrite?", false, "Are you sure...?");
+							if (destroyExisting){
+								outFileTest.remove();
+								outFileTest.close();
+							}
+						}
+          }
+        }
+      }
+			var jobID = app.encoder.encodeSequence(	app.project.activeSequence,
+													fullPathToFile,
+													outPreset.fsName,
+													app.encoder.ENCODE_WORKAREA, 
+													1);	   // Remove from queue upon successful completion?					
+			outPreset.close();
+	}
+}
+
+function exportFiles() {
+  var videoTracks = project.activeSequence.videoTracks
+  var audioTracks = project.activeSequence.audioTracks
+  var startingVideoTrack = 3
+  var startingAudioTrack = 3
+  var names = createLanguageVerions(project.activeSequence.name, true)
+  var outputPath  = Folder.selectDialog("Choose the output directory");
+  for (var j = 0; j < 5; j++) {
+    for (var i = 0; i < videoTracks.numTracks; i++) {
+      if (i === startingVideoTrack || i === startingVideoTrack + 1 || i == 0){
+        videoTracks[i].setMute(0)
+      }
+      else
+        videoTracks[i].setMute(1)
+
+      if (i === startingAudioTrack || i === 13) {
+        audioTracks[i].setMute(0)
+      }
+      else
+        audioTracks[i].setMute(1)
+    }
+    renderSequence(outputPresetPath, names[j].slice(0, -3), outputPath)
+    startingVideoTrack += 2
+    startingAudioTrack += 2
+  }
+}
+
 $.runScript = {
-  alert: function () {
+  importFilesToSequence: function () {
     app.enableQE()
+	  getDirectoryPath()
+    
     var videoTracks = project.activeSequence.videoTracks
     var mainFrTrack = videoTracks[3]
     var pointersTrack = videoTracks[4]
     var frPointers = pointersTrack.clips
 
     var frClips = mainFrTrack.clips
-    addVideoTracks()
+    //addVideoTracks()
 
     for (var i = 0; i < frClips.length; i++) {
       if (i === 0) {
@@ -114,4 +194,8 @@ $.runScript = {
       addEffects(i, frPointers[i], 6)
     }
   },
+
+  exportVideos: function () {
+    exportFiles()
+  }
 }
