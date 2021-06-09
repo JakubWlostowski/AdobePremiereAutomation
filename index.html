@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<!-- This document forms the dockable panel. The button is the <input> tag below. The <style> formats the button. 
+		The extendscript is called through the <script type="text/javascript"> tag, which then routes it to use the adobe_cep_.evalScript to interpret that Javascript into Extendscript -->
+
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Video automation script</title>
+		<script src="./lib/CSInterface.js"></script>		
+		<script type="text/javascript">
+			
+			function runImport() {
+				var cs = new CSInterface;
+								
+				cs.evalScript('$.runScript.importFilesToSequence()')
+			}
+
+			function runExport() {
+				var cs = new CSInterface;
+								
+				cs.evalScript('$.runScript.exportVideos()')
+			}
+
+			
+		</script>
+		<style>
+			body {
+				background-color: #7c2020;
+				color: #1a1212;
+				text-align: center;
+				}
+			input {
+				display: block;
+				margin: auto;
+				max-width: 100%;
+					}
+			
+
+		</style>
+	</head>
+
+	<body>
+
+		
+		<button id="runButton1" type="run" onclick="runImport()">Import files to the sequence!!!</button>
+		<button id="runButton2" type="run" onclick="runExport()">Export videos</button>
+				
+			  
+			     
+	</body>
+</html>
