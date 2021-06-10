@@ -167,7 +167,7 @@ function exportFiles() {
       else
         audioTracks[i].setMute(1)
     }
-    renderSequence(outputPresetPath, names[j].slice(0, -3), outputPath)
+    renderSequence(outputPresetPath, names[j], outputPath)
     startingVideoTrack += 2
     startingAudioTrack += 2
   }
