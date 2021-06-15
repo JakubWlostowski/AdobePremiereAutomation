@@ -155,7 +155,7 @@ function exportFiles() {
   var outputPath  = Folder.selectDialog("Choose the output directory");
   for (var j = 0; j < 5; j++) {
     for (var i = 0; i < 13; i++) {
-      if (i === startingVideoTrack || i === startingVideoTrack + 1 || i == 0){
+      if (i === startingVideoTrack || i === startingVideoTrack + 1 || i < 3){
         videoTracks[i].setMute(0)
       }
       else
