@@ -2,7 +2,7 @@ var LANGUAGE_VERSIONS = { FR: 'FR', EN: 'EN', ES: 'ES', IT: 'IT', DE: 'DE' }
 var path = ''
 var project = app.project
 var outputPresetPath = "C:\\Users\\jakub\\Documents\\example2.epr"
-
+var STARTING_TRACK = 5
 var projectItem = project.rootItem
 
 function getDirectoryPath() {
@@ -27,6 +27,12 @@ function createLanguageVerions(name, append_french_version) {
   return names
 }
 
+function getBin(projectPath){
+  var insidePath = projectPath.split('\\')
+  var valueToReturn = insidePath[2] !== null ? insidePath[2] : insidePath[1]
+  return valueToReturn
+}
+
 function createPaths(basicPath, names) {
   var paths = []
   paths.push(basicPath + names[0])
@@ -48,12 +54,13 @@ function findChildItem(node, name) {
 function addVideoTracks() {
   var seq = qe.project.getActiveSequence()
   seq.addTracks(8, 5)
+  seq.removeAudioTrack(0)
 }
 
 function handleClip(baseClip, folder, startingTrack) {
   var name = baseClip.name
   var names = createLanguageVerions(name, false)
-  var paths = createPaths(path, names)
+  var paths = createPaths(path+folder+"\\", names)
   var bin = projectItem.children[findChildItem(projectItem, folder)]
 
   app.project.importFiles(paths, false, bin, false)
@@ -133,8 +140,7 @@ function renderSequence(outputPresetPath, exportName, outputPath) {
 			var jobID = app.encoder.encodeSequence(	app.project.activeSequence,
 													fullPathToFile,
 													outPreset.fsName,
-													app.encoder.ENCODE_WORKAREA, 
-													1);	   // Remove from queue upon successful completion?					
+													app.encoder.ENCODE_WORKAREA, 0);				
 			outPreset.close();
 	}
 }
@@ -143,56 +149,52 @@ function exportFiles() {
   var videoTracks = project.activeSequence.videoTracks
   var audioTracks = project.activeSequence.audioTracks
   var startingVideoTrack = 3
-  var startingAudioTrack = 3
+  var startingAudioTrack = 2
   var names = createLanguageVerions(project.activeSequence.name, true)
   var outputPath  = Folder.selectDialog("Choose the output directory");
   for (var j = 0; j < 5; j++) {
-    for (var i = 0; i < videoTracks.numTracks; i++) {
-      if (i === startingVideoTrack || i === startingVideoTrack + 1 || i == 0){
+    for (var i = 0; i < 13; i++) {
+      if (i === startingVideoTrack || i === startingVideoTrack + 1 || i < 3){
         videoTracks[i].setMute(0)
       }
       else
         videoTracks[i].setMute(1)
 
-      if (i === startingAudioTrack || i === 13) {
+      if (i === startingAudioTrack || i === startingAudioTrack + 1 || i === 12) {
         audioTracks[i].setMute(0)
       }
       else
         audioTracks[i].setMute(1)
     }
-    renderSequence(outputPresetPath, names[j].slice(0, -3), outputPath)
+    renderSequence(outputPresetPath, names[j], outputPath)
     startingVideoTrack += 2
     startingAudioTrack += 2
   }
 }
-
 $.runScript = {
   importFilesToSequence: function () {
     app.enableQE()
-	  getDirectoryPath()
-    
-    var videoTracks = project.activeSequence.videoTracks
-    var mainFrTrack = videoTracks[3]
-    var pointersTrack = videoTracks[4]
-    var frPointers = pointersTrack.clips
 
-    var frClips = mainFrTrack.clips
-    //addVideoTracks()
+getDirectoryPath()
+var videoTracks = project.activeSequence.videoTracks
+var mainFrTrack = videoTracks[3]
+var pointersTrack = videoTracks[4]
+var frPointers = pointersTrack.clips
 
-    for (var i = 0; i < frClips.length; i++) {
-      if (i === 0) {
-        handleClip(frClips[i], 'INTRO', 5)
-      } else if (i === frClips.length - 1) {
-        handleClip(frClips[i], 'OUTRO', 5)
-      } else {
-        handleClip(frClips[i], 'CTA', 5)
-      }
-    }
+var frClips = mainFrTrack.clips
 
-    for (var i = 0; i < frPointers.length; i++) {
-      handleClip(frPointers[i], 'POINTERS', 6)
-      addEffects(i, frPointers[i], 6)
-    }
+addVideoTracks()
+
+for (var i = 0; i < frClips.length; i++) {
+    var projectPath = frClips[i].projectItem.treePath
+    handleClip(frClips[i], getBin(projectPath), STARTING_TRACK)
+}
+
+for (var i = 0; i < frPointers.length; i++) {
+    var projectPath = frPointers[i].projectItem.treePath
+    handleClip(frPointers[i], getBin(projectPath), STARTING_TRACK + 1)
+    addEffects(i, frPointers[i], STARTING_TRACK + 1)
+}
   },
 
   exportVideos: function () {
