@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ExtensionManifest Version="6.0" ExtensionBundleId="MyCustomScript" ExtensionBundleVersion="1.0.0" ExtensionBundleName="MyCustomScript" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<ExtensionManifest Version="6.0" ExtensionBundleId="MINOTHOR" ExtensionBundleVersion="1.0.0" ExtensionBundleName="MINOTHOR" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<ExtensionList>
-		<Extension Id="MyCustomScript" Version="1.0" />
+		<Extension Id="MINOTHOR" Version="1.0" />
 	</ExtensionList>
 	<ExecutionEnvironment>
 		<HostList>
@@ -16,7 +16,7 @@
 	</ExecutionEnvironment>
 
 	<DispatchInfoList>
-		<Extension Id="MyCustomScript">
+		<Extension Id="MINOTHOR">
 			<DispatchInfo >
 				<Resources>
 					<MainPath>./index.html</MainPath>
@@ -31,7 +31,7 @@
 				</Lifecycle>
 				<UI>
 					<Type>Panel</Type>
-					<Menu>MyCustomScript</Menu>
+					<Menu>MINOTHOR</Menu>
 					<Geometry>
 						<Size>
 							<Height>300</Height>
