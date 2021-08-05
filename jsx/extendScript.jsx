@@ -57,6 +57,12 @@ function addVideoTracks() {
   seq.removeAudioTrack(0)
 }
 
+function removeVideoTracks(){
+  var seq = qe.project.getActiveSequence()
+  for(var i = 0; i< 8;i++)
+    seq.removeVideoTrack(5)
+}
+
 function handleClip(baseClip, folder, startingTrack) {
   var name = baseClip.name
   var names = createLanguageVerions(name, false)
@@ -173,31 +179,44 @@ function exportFiles() {
 }
 $.runScript = {
   importFilesToSequence: function () {
-    app.enableQE()
+    	app.enableQE()
 
-getDirectoryPath()
-var videoTracks = project.activeSequence.videoTracks
-var mainFrTrack = videoTracks[3]
-var pointersTrack = videoTracks[4]
-var frPointers = pointersTrack.clips
+	getDirectoryPath()
+	var videoTracks = project.activeSequence.videoTracks
+	var mainFrTrack = videoTracks[3]
+	var pointersTrack = videoTracks[4]
+	var frPointers = pointersTrack.clips
 
-var frClips = mainFrTrack.clips
+	var frClips = mainFrTrack.clips
 
-addVideoTracks()
+	addVideoTracks()
 
-for (var i = 0; i < frClips.length; i++) {
-    var projectPath = frClips[i].projectItem.treePath
-    handleClip(frClips[i], getBin(projectPath), STARTING_TRACK)
-}
+	for (var i = 0; i < frClips.length; i++) {
+	    var projectPath = frClips[i].projectItem.treePath
+	    handleClip(frClips[i], getBin(projectPath), STARTING_TRACK)
+	}
 
-for (var i = 0; i < frPointers.length; i++) {
-    var projectPath = frPointers[i].projectItem.treePath
-    handleClip(frPointers[i], getBin(projectPath), STARTING_TRACK + 1)
-    addEffects(i, frPointers[i], STARTING_TRACK + 1)
-}
+	for (var i = 0; i < frPointers.length; i++) {
+	    var projectPath = frPointers[i].projectItem.treePath
+	    handleClip(frPointers[i], getBin(projectPath), STARTING_TRACK + 1)
+	    addEffects(i, frPointers[i], STARTING_TRACK + 1)
+	}
   },
-
+  undoToStartingPosition: function(){
+	var mySeq = app.project.activeSequence
+	for(var i = STARTING_TRACK; i < 13; i++){
+	  var videos = mySeq.videoTracks[i]
+	  while(videos.clips.length > 0){
+	    videos.clips[0].remove(0, 0)
+	  }
+	  var sounds = mySeq.audioTracks[i]
+	  while( i%2==1 && sounds.clips.length > 0){
+	    sounds.clips[0].remove(0, 0)
+	  }
+	}
+	removeVideoTracks()
+  },
   exportVideos: function () {
-    exportFiles()
+    	exportFiles()
   }
 }
