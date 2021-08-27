@@ -224,7 +224,7 @@ $.runScript = {
 	}
 	removeVideoTracks()
   },	
-  checkLanguageVersion: function () {{
+  checkLanguageVersion: function () {
 	var audioTracks = project.activeSequence.audioTracks
 
 	frAudioTrack = audioTracks[2]
