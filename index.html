@@ -21,6 +21,11 @@
 				cs.evalScript('$.runScript.undoToStartingPosition()')
 			}
 			
+			function runCheck() {
+				var cs = new CSInterface;
+								
+				cs.evalScript('$.runScript.checkLanguageVersion()')
+			}
 			function runExport() {
 				var cs = new CSInterface;
 								
@@ -49,8 +54,9 @@
 
 		
 		<button id="runButton1" type="run" onclick="runImport()">Import files to the sequence</button>
-		<button id="runButton1" type="run" onclick="runUndo()">Go back to starting position</button>
-		<button id="runButton2" type="run" onclick="runExport()">Export videos</button>
+		<button id="runButton2" type="run" onclick="runUndo()">Go back to starting position</button>
+		<button id="runButton3" type="run" onclick="runCheck()">Check language versions</button>
+		<button id="runButton4" type="run" onclick="runExport()">Export videos</button>
 				
 			  
 			     
