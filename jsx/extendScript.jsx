@@ -150,6 +150,14 @@ function renderSequence(outputPresetPath, exportName, outputPath) {
 			outPreset.close();
 	}
 }
+function checkLanguageTrack(language, track, number){
+  for(var i = 0; i<track.clips.length;i++){
+    var name = track.clips[i].name
+    if(name.indexOf(language) == -1 && name.indexOf(language.toLowerCase()) == -1){
+      alert('Audio file '+ name + ' on track ' + (number + 1) +' is on the wrong audio track!!!')
+    }
+  }
+}
 
 function exportFiles() {
   var videoTracks = project.activeSequence.videoTracks
@@ -215,6 +223,20 @@ $.runScript = {
 	  }
 	}
 	removeVideoTracks()
+  },	
+  checkLanguageVersion: function () {{
+	var audioTracks = project.activeSequence.audioTracks
+
+	frAudioTrack = audioTracks[2]
+	enAudioTrack = audioTracks[4]
+	esAudioTrack = audioTracks[6]
+	itAudioTrack = audioTracks[8]
+	deAudioTrack = audioTracks[10]
+	checkLanguageTrack('FR', frAudioTrack, 2)
+	checkLanguageTrack('EN', enAudioTrack, 4)
+	checkLanguageTrack('ES', esAudioTrack, 6)
+	checkLanguageTrack('IT', itAudioTrack, 8)
+	checkLanguageTrack('DE', deAudioTrack, 10)
   },
   exportVideos: function () {
     	exportFiles()
