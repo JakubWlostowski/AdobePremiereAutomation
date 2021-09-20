@@ -202,6 +202,7 @@ $.runScript = {
 	for (var i = 0; i < frClips.length; i++) {
 	    var projectPath = frClips[i].projectItem.treePath
 	    handleClip(frClips[i], getBin(projectPath), STARTING_TRACK)
+	    addEffects(i, frClips[i], STARTING_TRACK)
 	}
 
 	for (var i = 0; i < frPointers.length; i++) {
