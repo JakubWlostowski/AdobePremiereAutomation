@@ -1,7 +1,7 @@
 var LANGUAGE_VERSIONS = { FR: 'FR', EN: 'EN', ES: 'ES', IT: 'IT', DE: 'DE' }
 var path = ''
 var project = app.project
-var outputPresetPath = "C:\\Users\\jakub\\Documents\\example2.epr"
+var outputPresetPath = "C:\\Users\\The Beast\\Documents\\Adobe\\Adobe Media Encoder\\22.0\\Presets\\MINOTHOR.epr"
 var STARTING_TRACK = 5
 var projectItem = project.rootItem
 
@@ -61,6 +61,7 @@ function removeVideoTracks(){
   var seq = qe.project.getActiveSequence()
   for(var i = 0; i< 8;i++)
     seq.removeVideoTrack(5)
+  app.project.consolidateDuplicates()
 }
 
 function handleClip(baseClip, folder, startingTrack) {
@@ -119,8 +120,10 @@ function renderSequence(outputPresetPath, exportName, outputPath) {
 			var seqOutPoint	= app.project.activeSequence.getOutPoint();
 
 			if (outputPath){
+
 				var outPreset		= new File(outputPresetPath);
 				if (outPreset.exists === true){
+
 					var outputFormatExtension		=	activeSequence.getExportFileExtension(outPreset.fsName);
 					if (outputFormatExtension){
 						var outputFilename	= 	activeSequence.name + '.' + outputFormatExtension;
@@ -173,7 +176,6 @@ function exportFiles() {
       }
       else
         videoTracks[i].setMute(1)
-
       if (i === startingAudioTrack || i === startingAudioTrack + 1 || i === 12) {
         audioTracks[i].setMute(0)
       }
@@ -210,6 +212,7 @@ $.runScript = {
 	    handleClip(frPointers[i], getBin(projectPath), STARTING_TRACK + 1)
 	    addEffects(i, frPointers[i], STARTING_TRACK + 1)
 	}
+	app.project.consolidateDuplicates()
   },
   undoToStartingPosition: function(){
 	var mySeq = app.project.activeSequence
