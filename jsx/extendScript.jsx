@@ -112,47 +112,44 @@ function addEffects(itemIndex, clip, startingTrack) {
 }
 
 function renderSequence(outputPresetPath, exportName, outputPath) {
-		app.enableQE();
-		var activeSequence = qe.project.getActiveSequence();
-		if (activeSequence)	{
-			//app.encoder.launchEncoder();
-			var seqInPoint	= app.project.activeSequence.getInPoint();
-			var seqOutPoint	= app.project.activeSequence.getOutPoint();
+    app.enableQE();
+    var activeSequence = qe.project.getActiveSequence();
+    if (activeSequence)	{
+      //app.encoder.launchEncoder();
+      var seqInPoint	= app.project.activeSequence.getInPoint();
+      var seqOutPoint	= app.project.activeSequence.getOutPoint();
 
-			if (outputPath){
+      if (outputPath){
+        var outPreset	= new File(outputPresetPath);
+        if (outPreset.exists === true){
+          var outputFormatExtension	=	activeSequence.getExportFileExtension(outPreset.fsName);
+          if (outputFormatExtension) {
+            var outputFilename = activeSequence.name + '.' + outputFormatExtension;
+						var fullPathToFile = outputPath.fsName +
+                                 "\\" +
+                                 exportName +
+                                 "." +
+                                 outputFormatExtension;
 
-				var outPreset		= new File(outputPresetPath);
-				if (outPreset.exists === true){
-
-					var outputFormatExtension		=	activeSequence.getExportFileExtension(outPreset.fsName);
-					if (outputFormatExtension){
-						var outputFilename	= 	activeSequence.name + '.' + outputFormatExtension;
-
-						var fullPathToFile	= 	outputPath.fsName 	+ 
-												"\\" 	+ 
-												exportName + 
-												"." + 
-												outputFormatExtension;			
-
-						var outFileTest = new File(fullPathToFile);
-
-						if (outFileTest.exists){
-							var destroyExisting	= confirm("A file with that name already exists; overwrite?", false, "Are you sure...?");
-							if (destroyExisting){
-								outFileTest.remove();
-								outFileTest.close();
-							}
-						}
+            var outFileTest = new File(fullPathToFile);
+            if (outFileTest.exists){
+              var destroyExisting	= confirm("A file with that name already exists; overwrite?", false, "Are you sure...?");
+              if (destroyExisting) {
+                outFileTest.remove();
+                outFileTest.close();
+              }
+            }
           }
         }
       }
-			var jobID = app.encoder.encodeSequence(	app.project.activeSequence,
-													fullPathToFile,
-													outPreset.fsName,
-													app.encoder.ENCODE_WORKAREA, 0);				
-			outPreset.close();
-	}
+      var jobID = app.encoder.encodeSequence(app.project.activeSequence,
+                                             fullPathToFile,
+                                             outPreset.fsName,
+                                             1 /* ENCODE_IN_TO_OUT */, 0);
+      outPreset.close();
+  }
 }
+
 function checkLanguageTrack(language, track, number){
   for(var i = 0; i<track.clips.length;i++){
     var name = track.clips[i].name
